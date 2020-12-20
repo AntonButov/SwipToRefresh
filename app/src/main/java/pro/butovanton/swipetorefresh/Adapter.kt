@@ -7,14 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import pro.butovanton.swipetorefresh.databinding.ItemBinding
+import pro.butovanton.swipetorefresh.databinding.ItemErrorBinding
 import pro.butovanton.swipetorefresh.databinding.ItemLoadMoreBinding
 import java.lang.Exception
 import kotlin.math.E
 
 class Adapter(private val inflater: LayoutInflater): RecyclerView.Adapter<Adapter.ViewHolder>() {
 
-    val TYPE_ITEM = 0
-    val TYPE_LOAD_MORE = 1
+    private val TYPE_ITEM = 0
+    private val TYPE_LOAD_MORE = 1
+    private val TYPE_ERROR_ITEM = 2
 
     var dataRecycler = mutableListOf<DataRecycler>(DataRecycler.LoadMore())
 
@@ -26,11 +28,14 @@ class Adapter(private val inflater: LayoutInflater): RecyclerView.Adapter<Adapte
     class HolderLoadMore(binding: ItemLoadMoreBinding):
             ViewHolder(binding.root)
 
+    class HolderItemError(binding: ItemErrorBinding):
+            ViewHolder(binding.root)
+
     override fun getItemViewType(position: Int): Int {
         return when (dataRecycler[position]) {
             is DataRecycler.Data -> TYPE_ITEM
             is DataRecycler.LoadMore -> TYPE_LOAD_MORE
-            else -> throw Exception("Ошибочный элемент.")
+            is DataRecycler.Error -> TYPE_ERROR_ITEM
         }
     }
 
@@ -38,6 +43,7 @@ class Adapter(private val inflater: LayoutInflater): RecyclerView.Adapter<Adapte
             return when (viewType) {
                 TYPE_ITEM -> Holder(ItemBinding.inflate(inflater, parent, false))
                 TYPE_LOAD_MORE -> HolderLoadMore(ItemLoadMoreBinding.inflate(inflater, parent, false))
+                TYPE_ERROR_ITEM -> HolderItemError(ItemErrorBinding.inflate(inflater,parent,false))
                 else -> throw  Exception("Такого элемента не может быть.")
             }
         }

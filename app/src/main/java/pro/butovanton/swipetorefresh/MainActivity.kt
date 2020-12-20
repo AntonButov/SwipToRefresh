@@ -52,12 +52,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun errorAnaliser() {
         val data = repo.getData()
-        if (data.size > 0) //todo это нужно убрать за счет обсервера.
-        if (data[0] is DataRecycler.Error)
-            showErrorSnack()
-        else
-            adapterRecycler.add(data)
+        if (data.size > 0) {
+            if (isDataError(data) && adapterRecycler.itemCount == 1) {
+                showErrorSnack()
+                return
+            }
+        adapterRecycler.add(data)
+        }
     }
+
+    private fun isDataError(data: List<DataRecycler>) = data.size == 1 && (data[0] is DataRecycler.Error)
 
     private fun showErrorSnack() {
         Snackbar.make(binding.root, "Ошибка сервера", Snackbar.LENGTH_SHORT).show()
