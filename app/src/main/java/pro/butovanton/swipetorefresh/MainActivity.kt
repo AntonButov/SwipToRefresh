@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import pro.butovanton.swipetorefresh.databinding.ActivityMainBinding
 import pro.butovanton.swipetorefresh.repo.Repo
 import pro.butovanton.swipetorefresh.server.Server
@@ -53,6 +54,13 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
     binding.fabDelete.setOnClickListener {
         adapterRecycler.delete()
     }
+
+    binding.swiperefresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
+        override fun onRefresh() {
+            getData()
+            binding.swiperefresh.isRefreshing = false
+        }
+    })
     }
 
     private fun getData() {
