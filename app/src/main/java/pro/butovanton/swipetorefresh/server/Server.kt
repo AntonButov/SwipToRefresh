@@ -2,14 +2,15 @@ package pro.butovanton.swipetorefresh.server
 
 class Server: IServer {
 
-    val maxPages = 3
+    val MAX_PAGES = 4
+    val ERROR_PAGE =2
 
     var page: Int = 0
     val data = initData()
 
     private fun initData(): List<List<String>> {
         val result = mutableListOf<List<String>>()
-        for (p in 0..3)
+        for (p in 0..10)
             result.add(initPage())
      return result
     }
@@ -22,9 +23,12 @@ class Server: IServer {
     }
 
     override fun getNextPage(): ResponseServer {
-        if (page < maxPages) {
-        page ++
-        return ResponseServer.Data(data[page], page < maxPages)
+        if (page < MAX_PAGES) {
+        page++
+        if (page == ERROR_PAGE)
+            return ResponseServer.Error()
+        else
+            return ResponseServer.Data(data[page], page < MAX_PAGES)
         }
     return ResponseServer.Data(listOf(), false)
     }
