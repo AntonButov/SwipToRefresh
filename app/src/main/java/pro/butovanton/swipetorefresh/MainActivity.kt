@@ -1,12 +1,10 @@
 package pro.butovanton.swipetorefresh
 
 import android.os.Bundle
-import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
-import android.view.MotionEvent
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +13,7 @@ import pro.butovanton.swipetorefresh.repo.Repo
 import pro.butovanton.swipetorefresh.server.Server
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
 
     val repo = Repo(Server())
     var isLoading = false
@@ -28,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-        adapterRecycler = Adapter(inflater = layoutInflater)
+        adapterRecycler = Adapter(inflater = layoutInflater, this)
         binding.recyclerView.apply {
         layoutManager = LinearLayoutManager(context)
         adapter = adapterRecycler
@@ -44,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
+        findViewById<FloatingActionButton>(R.id.fabDelete).setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
@@ -73,6 +71,14 @@ class MainActivity : AppCompatActivity() {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
+    }
+
+    override fun selectOff() {
+        binding.fabDelete.visibility = View.INVISIBLE
+    }
+
+    override fun selectOnn() {
+        binding.fabDelete.visibility = View.VISIBLE
     }
 
 }

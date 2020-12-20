@@ -1,6 +1,7 @@
 package pro.butovanton.swipetorefresh
 
 import android.content.ClipData
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,11 +14,18 @@ import pro.butovanton.swipetorefresh.databinding.ItemLoadMoreBinding
 import java.lang.Exception
 import kotlin.math.E
 
-class Adapter(private val inflater: LayoutInflater): RecyclerView.Adapter<Adapter.ViewHolder>() {
+class Adapter(private val inflater: LayoutInflater, private val selectInterface: SelectInterface): RecyclerView.Adapter<Adapter.ViewHolder>() {
+
+    interface SelectInterface {
+        fun selectOff()
+        fun selectOnn()
+    }
 
     private val TYPE_ITEM = 0
     private val TYPE_LOAD_MORE = 1
     private val TYPE_ERROR_ITEM = 2
+
+    var selectCount = 0
 
     var dataRecycler = mutableListOf<DataRecycler>(DataRecycler.LoadMore())
 
@@ -53,18 +61,32 @@ class Adapter(private val inflater: LayoutInflater): RecyclerView.Adapter<Adapte
             if (holder is Holder) {
                 holder.binding.itemName.text = (dataRecycler[position] as DataRecycler.Data).names
                 if ((dataRecycler[position] as DataRecycler.Data).isSelect)
-                    holder.itemView.setBackgroundColor(R.color.black)
+                    holder.itemView.setBackgroundColor(Color.BLACK)
+                else
+                    holder.itemView.setBackgroundColor(Color.WHITE)
                 holder.itemView.setOnLongClickListener(object : View.OnLongClickListener {
                     override fun onLongClick(v: View?): Boolean {
                         (dataRecycler[position] as DataRecycler.Data).isSelect =
                         !(dataRecycler[position] as DataRecycler.Data).isSelect
                         notifyItemChanged(position)
+                        countSelectUpdate((dataRecycler[position] as DataRecycler.Data).isSelect)
                         return true
                     }
 
                 })
             }
             }
+
+    private fun countSelectUpdate(select: Boolean) {
+        if (select)
+            selectCount++
+        else
+            selectCount--
+        if (selectCount == 0)
+            selectInterface.selectOff()
+        else
+            selectInterface.selectOnn()
+    }
 
     fun add(dataMore: List<DataRecycler>) {
         if (dataMore.size>0) {
