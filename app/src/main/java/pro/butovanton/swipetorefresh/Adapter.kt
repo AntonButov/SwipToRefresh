@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import pro.butovanton.swipetorefresh.databinding.ItemBinding
 import pro.butovanton.swipetorefresh.databinding.ItemErrorBinding
@@ -49,8 +50,20 @@ class Adapter(private val inflater: LayoutInflater): RecyclerView.Adapter<Adapte
         }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            if (holder is Holder)
+            if (holder is Holder) {
                 holder.binding.itemName.text = (dataRecycler[position] as DataRecycler.Data).names
+                if ((dataRecycler[position] as DataRecycler.Data).isSelect)
+                    holder.itemView.setBackgroundColor(R.color.black)
+                holder.itemView.setOnLongClickListener(object : View.OnLongClickListener {
+                    override fun onLongClick(v: View?): Boolean {
+                        (dataRecycler[position] as DataRecycler.Data).isSelect =
+                        !(dataRecycler[position] as DataRecycler.Data).isSelect
+                        notifyItemChanged(position)
+                        return true
+                    }
+
+                })
+            }
             }
 
     fun add(dataMore: List<DataRecycler>) {

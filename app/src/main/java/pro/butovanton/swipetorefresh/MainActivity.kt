@@ -1,10 +1,13 @@
 package pro.butovanton.swipetorefresh
 
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
+import android.view.MotionEvent
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import pro.butovanton.swipetorefresh.databinding.ActivityMainBinding

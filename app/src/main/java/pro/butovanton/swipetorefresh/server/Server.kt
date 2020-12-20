@@ -11,14 +11,14 @@ class Server: IServer {
     private fun initData(): List<List<String>> {
         val result = mutableListOf<List<String>>()
         for (p in 0..10)
-            result.add(initPage())
+            result.add(initPage(p))
      return result
     }
 
-    private fun initPage(): List<String> {
+    private fun initPage(page: Int): List<String> {
         val result = mutableListOf<String>()
         for (i in 0 .. 15)
-            result.add("Data $i")
+            result.add("Data $page$i")
     return result
     }
 
