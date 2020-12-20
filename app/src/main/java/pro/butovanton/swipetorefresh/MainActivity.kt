@@ -77,7 +77,13 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
     private fun isDataError(data: List<DataRecycler>) = data.size == 1 && (data[0] is DataRecycler.Error)
 
     private fun showErrorSnack() {
-        Snackbar.make(binding.root, "Ошибка сервера", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.root, "Ошибка сервера", Snackbar.LENGTH_SHORT)
+                .setAction("Повотроить", object : View.OnClickListener{
+                    override fun onClick(v: View?) {
+                        getData()
+                    }
+                })
+                .show()
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
