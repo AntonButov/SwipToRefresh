@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
                val last = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                    if (last == recyclerView.adapter!!.itemCount - 1 && !isLoading && dy != 0 ) {
                        //isLoading = true
-                       errorAnaliser()
+                       getData()
                 }
                }
             })
@@ -48,10 +48,14 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
         }
         setContentView(binding.root)
 
-    errorAnaliser()
+    getData()
+
+    binding.fabDelete.setOnClickListener {
+        adapterRecycler.delete()
+    }
     }
 
-    private fun errorAnaliser() {
+    private fun getData() {
         val data = repo.getData()
         if (data.size > 0) {
             if (isDataError(data) && adapterRecycler.itemCount == 1) {

@@ -1,18 +1,14 @@
 package pro.butovanton.swipetorefresh
 
-import android.content.ClipData
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import pro.butovanton.swipetorefresh.databinding.ItemBinding
 import pro.butovanton.swipetorefresh.databinding.ItemErrorBinding
 import pro.butovanton.swipetorefresh.databinding.ItemLoadMoreBinding
 import java.lang.Exception
-import kotlin.math.E
 
 class Adapter(private val inflater: LayoutInflater, private val selectInterface: SelectInterface): RecyclerView.Adapter<Adapter.ViewHolder>() {
 
@@ -25,7 +21,7 @@ class Adapter(private val inflater: LayoutInflater, private val selectInterface:
     private val TYPE_LOAD_MORE = 1
     private val TYPE_ERROR_ITEM = 2
 
-    var selectCount = 0
+    val killList = mutableListOf<DataRecycler>()
 
     var dataRecycler = mutableListOf<DataRecycler>(DataRecycler.LoadMore())
 
@@ -61,7 +57,7 @@ class Adapter(private val inflater: LayoutInflater, private val selectInterface:
             if (holder is Holder) {
                 holder.binding.itemName.text = (dataRecycler[position] as DataRecycler.Data).names
                 if ((dataRecycler[position] as DataRecycler.Data).isSelect)
-                    holder.itemView.setBackgroundColor(Color.BLACK)
+                    holder.itemView.setBackgroundColor(Color.YELLOW)
                 else
                     holder.itemView.setBackgroundColor(Color.WHITE)
                 holder.itemView.setOnLongClickListener(object : View.OnLongClickListener {
@@ -69,7 +65,7 @@ class Adapter(private val inflater: LayoutInflater, private val selectInterface:
                         (dataRecycler[position] as DataRecycler.Data).isSelect =
                         !(dataRecycler[position] as DataRecycler.Data).isSelect
                         notifyItemChanged(position)
-                        countSelectUpdate((dataRecycler[position] as DataRecycler.Data).isSelect)
+                        countSelectUpdate(dataRecycler[position])
                         return true
                     }
 
@@ -77,12 +73,12 @@ class Adapter(private val inflater: LayoutInflater, private val selectInterface:
             }
             }
 
-    private fun countSelectUpdate(select: Boolean) {
-        if (select)
-            selectCount++
+    private fun countSelectUpdate(dataRecycler: DataRecycler) {
+        if ((dataRecycler as DataRecycler.Data).isSelect)
+           killList.add(dataRecycler)
         else
-            selectCount--
-        if (selectCount == 0)
+           killList.remove(dataRecycler)
+        if (killList.size == 0)
             selectInterface.selectOff()
         else
             selectInterface.selectOnn()
@@ -94,7 +90,15 @@ class Adapter(private val inflater: LayoutInflater, private val selectInterface:
             dataRecycler.addAll(dataMore)
             notifyDataSetChanged()
         }
-        }
+    }
+
+    fun delete(): List<DataRecycler> {
+        killList.forEach { item ->
+                dataRecycler.remove(item)
+            }
+        notifyDataSetChanged()
+    return killList
+    }
 
     override fun getItemCount(): Int = dataRecycler.size
 }
