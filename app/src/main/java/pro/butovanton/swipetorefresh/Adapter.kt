@@ -16,7 +16,7 @@ class Adapter(private val inflater: LayoutInflater): RecyclerView.Adapter<Adapte
     val TYPE_ITEM = 0
     val TYPE_LOAD_MORE = 1
 
-    var dataRecycler = mutableListOf<DataRecycler>()
+    var dataRecycler = mutableListOf<DataRecycler>(DataRecycler.LoadMore())
 
     open class ViewHolder(view: View): RecyclerView.ViewHolder(view)
 
@@ -47,10 +47,12 @@ class Adapter(private val inflater: LayoutInflater): RecyclerView.Adapter<Adapte
                 holder.binding.itemName.text = (dataRecycler[position] as DataRecycler.Data).names
             }
 
-    fun add(gamesMore: List<DataRecycler>) {
-          //  dataRecycler.
-            dataRecycler.addAll(gamesMore)
+    fun add(dataMore: List<DataRecycler>) {
+        if (dataMore.size>0) {
+            dataRecycler.removeAt(dataRecycler.count() - 1)
+            dataRecycler.addAll(dataMore)
             notifyDataSetChanged()
+        }
         }
 
     override fun getItemCount(): Int = dataRecycler.size

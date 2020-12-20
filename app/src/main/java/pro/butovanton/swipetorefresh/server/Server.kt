@@ -22,11 +22,11 @@ class Server: IServer {
     }
 
     override fun getNextPage(): ResponseServer {
-        return when (page) {
-            0 -> ResponseServer.Data(data[page], page < maxPages)
-            else -> ResponseServer.Error()
+        if (page < maxPages) {
+        page ++
+        return ResponseServer.Data(data[page], page < maxPages)
         }
-        page++
+    return ResponseServer.Data(listOf(), false)
     }
 
 }

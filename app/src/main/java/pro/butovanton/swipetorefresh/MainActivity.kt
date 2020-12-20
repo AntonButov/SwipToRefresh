@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import pro.butovanton.swipetorefresh.databinding.ActivityMainBinding
 import pro.butovanton.swipetorefresh.repo.Repo
 import pro.butovanton.swipetorefresh.server.Server
@@ -14,6 +15,7 @@ import pro.butovanton.swipetorefresh.server.Server
 class MainActivity : AppCompatActivity() {
 
     val repo = Repo(Server())
+    var isLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +26,16 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.apply {
         layoutManager = LinearLayoutManager(context)
         adapter = adapterRacycler
+        addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+               super.onScrolled(recyclerView, dx, dy)
+               val last = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                   if (last == recyclerView.adapter!!.itemCount - 1 && !isLoading && dy != 0 ) {
+                       //isLoading = true
+                       adapterRacycler.add(repo.getData().toMutableList())
+               }
+               }
+            })
         }
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
