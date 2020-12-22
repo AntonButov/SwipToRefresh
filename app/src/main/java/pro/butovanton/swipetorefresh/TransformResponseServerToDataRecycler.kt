@@ -2,11 +2,8 @@ package pro.butovanton.swipetorefresh
 
 import pro.butovanton.swipetorefresh.server.ResponseServer
 
+class TransformResponseServerToDataRecycler {
 
-//ResponseServer -> DataRecycler
-class Maper {
-
-    companion object {
        fun mapResponserServerToDataRecycler(serverGet: ResponseServer): List<DataRecycler> {
            return when (serverGet) {
                is ResponseServer.Data -> mapDataServerToDataRecyclerView(serverGet)
@@ -23,5 +20,4 @@ class Maper {
                dataRecycler.add(DataRecycler.LoadMore())
            return dataRecycler
        }
-    }
 }

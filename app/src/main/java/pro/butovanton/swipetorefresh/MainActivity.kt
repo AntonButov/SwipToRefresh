@@ -21,8 +21,8 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
 
-    val repo = Repo(Server())
-    var isLoading = false
+    private val repo = Repo(Server())
+    private var isLoading = false
 
     lateinit var binding: ActivityMainBinding
     lateinit var adapterRecycler: Adapter
@@ -40,8 +40,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                super.onScrolled(recyclerView, dx, dy)
                val last = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
-                   if (last == recyclerView.adapter!!.itemCount - 1 && !isLoading && dy != 0 ) {
-                       //isLoading = true
+                   if (last == recyclerView.adapter!!.itemCount - 1 && dy != 0 ) {
                        getData()
                 }
                }
@@ -63,7 +62,6 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
     binding.swiperefresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
         override fun onRefresh() {
             getData()
-            binding.swiperefresh.isRefreshing = false
         }
     })
     }
@@ -72,6 +70,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
         if (isLoading == false) {
             Log.d("DEBUG", "getData")
             isLoading = true
+            binding.swiperefresh.isRefreshing = true
             repo.getData()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -81,6 +80,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
                     }
                     adapterRecycler.add(data)
                     isLoading = false
+                    binding.swiperefresh.isRefreshing = false
                 }
         }
     }
