@@ -1,14 +1,19 @@
 package pro.butovanton.swipetorefresh
 
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.View
+import androidx.annotation.MainThread
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.schedulers.Schedulers
 import pro.butovanton.swipetorefresh.databinding.ActivityMainBinding
 import pro.butovanton.swipetorefresh.repo.Repo
 import pro.butovanton.swipetorefresh.server.Server
@@ -64,13 +69,19 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
     }
 
     private fun getData() {
-        val data = repo.getData()
-        if (data.size > 0) {
-            if (isDataError(data) && adapterRecycler.itemCount == 1) {
-                showErrorSnack()
-                return
-            }
-        adapterRecycler.add(data)
+        if (isLoading == false) {
+            Log.d("DEBUG", "getData")
+            isLoading = true
+            repo.getData()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { data ->
+                    if (isDataError(data) && adapterRecycler.itemCount == 1) {
+                        showErrorSnack()
+                    }
+                    adapterRecycler.add(data)
+                    isLoading = false
+                }
         }
     }
 

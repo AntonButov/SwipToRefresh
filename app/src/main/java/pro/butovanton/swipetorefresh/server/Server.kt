@@ -1,5 +1,11 @@
 package pro.butovanton.swipetorefresh.server
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
+
 class Server: IServer {
 
     val MAX_PAGES = 4
@@ -17,20 +23,25 @@ class Server: IServer {
 
     private fun initPage(page: Int): List<String> {
         val result = mutableListOf<String>()
-        for (i in 0 .. 15)
+        for (i in 0 .. 20)
             result.add("Data $page$i")
     return result
     }
 
-    override fun getNextPage(): ResponseServer {
-        if (page < MAX_PAGES) {
-        page++
-        if (page == ERROR_PAGE)
-            return ResponseServer.Error()
-        else
-            return ResponseServer.Data(data[page], page < MAX_PAGES)
+    override fun getNextPage() = Single
+            .just(getData())
+            .delay(2, TimeUnit.SECONDS)
+
+
+    private fun getData(): ResponseServer {
+           if (page < MAX_PAGES) {
+                page++
+                if (page == ERROR_PAGE)
+                    return ResponseServer.Error()
+                else
+                    return ResponseServer.Data(data[page], page < MAX_PAGES)
+            }
+            return ResponseServer.Data(listOf(), false)
         }
-    return ResponseServer.Data(listOf(), false)
-    }
 
 }

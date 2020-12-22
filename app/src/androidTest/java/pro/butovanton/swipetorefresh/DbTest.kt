@@ -32,7 +32,7 @@ class DbTest {
         dao.delete()
     }
 
-    val testData = listOf<Data>(Data("testName1"),Data("testName2"))
+    val testData = listOf(Data("testName1"),Data("testName2"))
 
     @Test
     fun dbTest() {
