@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.schedulers.Schedulers
+
 import pro.butovanton.swipetorefresh.databinding.ActivityMainBinding
 import pro.butovanton.swipetorefresh.repo.Repo
 import pro.butovanton.swipetorefresh.server.Server

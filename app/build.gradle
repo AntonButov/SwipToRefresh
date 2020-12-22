@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-android-extensions'
     id 'kotlin-kapt'
 }
 
@@ -50,13 +51,23 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.2.0'
+
     implementation "android.arch.persistence.room:runtime:2.2.3"
     annotationProcessor "android.arch.persistence.room:compiler:2.2.3"
 
-    implementation "androidx.room:room-ktx:2.2.3"
-    kapt "androidx.room:room-compiler:2.2.3"
-    androidTestImplementation "androidx.arch.core:core-testing:2.0.0"
+    def room_version = "2.3.0-alpha04"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_version"
+    implementation "androidx.room:room-rxjava3:$room_version"
 
     implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+
+    androidTestImplementation "android.arch.core:core-testing:2.0.0"
+    testImplementation "android.arch.core:core-testing:2.0.0"
+
+    implementation "android.arch.lifecycle:reactivestreams:1.0.0"
 }

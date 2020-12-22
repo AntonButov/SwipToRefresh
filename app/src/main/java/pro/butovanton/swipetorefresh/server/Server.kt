@@ -32,7 +32,6 @@ class Server: IServer {
             .just(getData())
             .delay(2, TimeUnit.SECONDS)
 
-
     private fun getData(): ResponseServer {
            if (page < MAX_PAGES) {
                 page++
@@ -43,5 +42,4 @@ class Server: IServer {
             }
             return ResponseServer.Data(listOf(), false)
         }
-
 }

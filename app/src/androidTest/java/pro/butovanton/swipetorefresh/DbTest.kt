@@ -1,5 +1,6 @@
 package pro.butovanton.swipetorefresh
 
+
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -22,8 +23,8 @@ import pro.butovanton.swipetorefresh.db.Data
 @RunWith(AndroidJUnit4::class)
 class DbTest {
 
-   // @get:Rule
-   // var instantTaskExecutorRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
+    @get:Rule
+    var instantTaskExecutorRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
 
     val dao = (app as App).getDB().getDao()
 
@@ -38,7 +39,9 @@ class DbTest {
     fun dbTest() {
         Assert.assertNotNull(dao)
         dao.insert(testData)
-        val fromDB = dao.getAll()
-        Assert.assertEquals(testData, fromDB)
+        dao.getAll().observeForever {fromDB ->
+            if (fromDB.size > 0)
+               Assert.assertEquals(testData, fromDB)
+        }
     }
 }
