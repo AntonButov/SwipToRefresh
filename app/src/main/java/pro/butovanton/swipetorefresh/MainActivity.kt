@@ -69,7 +69,16 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
             }
         getNextPage()
 
-    binding.fabDelete.setOnClickListener {
+        repo.errorServer = object: Repo.ErrorServer {
+            override fun errorServer() {
+        runOnUiThread() {
+            showErrorSnack()
+            isLoading = false
+        }
+        }
+        }
+
+        binding.fabDelete.setOnClickListener {
         adapterRecycler.delete()
     }
 
@@ -90,7 +99,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
     private fun isDataError(data: List<DataRecycler>) = data.size == 1 && (data[0] is DataRecycler.Error)
 
     private fun showErrorSnack() {
-        Snackbar.make(binding.root, "Ошибка сервера", Snackbar.LENGTH_SHORT)
+        Snackbar.make(binding.root, "Ошибка сервера", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Повотроить", object : View.OnClickListener{
                     override fun onClick(v: View?) {
                         getNextPage()

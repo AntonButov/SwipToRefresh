@@ -20,8 +20,15 @@ import java.util.concurrent.Flow
 
 class Repo(private val server: IServer, val dao: Dao = (app as App).getDB().getDao(), val transformResponseServerToDataRecycler: TransformResponseServerToDataRecycler = TransformResponseServerToDataRecycler()): IRepo {
 
+    interface ErrorServer {
+        fun errorServer()
+    }
+
+    var errorServer: ErrorServer? = null
+
     private var serverCanMore = false
     private var serverError = false
+    private lateinit var error: Single<Boolean>
 
     override fun getData(): Observable<List<DataRecycler>> {
         return getFromDisk()
@@ -38,8 +45,8 @@ class Repo(private val server: IServer, val dao: Dao = (app as App).getDB().getD
                 .filter { it.size > 0 }
                 .doOnSuccess { data ->
                     saveToDisk(data)
-                }.subscribe()
-
+                }
+               .subscribe()
     }
 
     private fun  saveToDisk(dataRecycler: List<DataRecycler>) {
@@ -53,8 +60,7 @@ class Repo(private val server: IServer, val dao: Dao = (app as App).getDB().getD
                 is DataRecycler.LoadMore ->
                     serverCanMore = true
                 is DataRecycler.Error -> {
-                    serverError = true
-                dao.insert(mutableListOf(Data("Error!")))
+                    errorServer?.errorServer()
                 }
             }
         }
@@ -71,8 +77,6 @@ class Repo(private val server: IServer, val dao: Dao = (app as App).getDB().getD
         fromDisk.forEach { fromDiskItem ->
             result.add(DataRecycler.Data(fromDiskItem.name))
         }
-       if (serverError)
-           result.add(DataRecycler.Error())
        if (serverCanMore)
            result.add(DataRecycler.LoadMore())
     return result

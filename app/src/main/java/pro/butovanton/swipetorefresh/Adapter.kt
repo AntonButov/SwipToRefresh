@@ -92,6 +92,11 @@ class Adapter(private val inflater: LayoutInflater, private val selectInterface:
         }
     }
 
+    fun add(data: DataRecycler) {
+            dataRecycler.add(data)
+            notifyDataSetChanged()
+        }
+
     fun delete(): List<DataRecycler> {
         killList.forEach { item ->
                 dataRecycler.remove(item)
