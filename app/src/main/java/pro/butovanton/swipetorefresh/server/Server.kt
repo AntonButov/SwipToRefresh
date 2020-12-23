@@ -32,6 +32,10 @@ class Server: IServer {
             .just(getData())
             .delay(2, TimeUnit.SECONDS)
 
+    override fun setPage0() {
+        page = 0
+    }
+
     private fun getData(): ResponseServer {
            if (page < MAX_PAGES) {
                 page++

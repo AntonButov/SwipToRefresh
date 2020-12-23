@@ -86,7 +86,7 @@ class Adapter(private val inflater: LayoutInflater, private val selectInterface:
 
     fun add(dataMore: List<DataRecycler>) {
         if (dataMore.size>0) {
-            dataRecycler.removeAt(dataRecycler.count() - 1)
+            dataRecycler.clear()
             dataRecycler.addAll(dataMore)
             notifyDataSetChanged()
         }

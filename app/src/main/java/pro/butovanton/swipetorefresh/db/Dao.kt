@@ -19,6 +19,7 @@ package pro.butovanton.swipetorefresh.db
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.Dao
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 
@@ -26,7 +27,7 @@ import io.reactivex.rxjava3.core.Single
 interface Dao {
 
     @Query("SELECT * FROM DATA")
-    fun getAll(): Single<List<Data>>
+    fun getAll(): Observable<List<Data>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(dataList: List<Data>)

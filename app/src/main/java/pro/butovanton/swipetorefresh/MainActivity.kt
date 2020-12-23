@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 import pro.butovanton.swipetorefresh.databinding.ActivityMainBinding
@@ -27,6 +28,8 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
     lateinit var binding: ActivityMainBinding
     lateinit var adapterRecycler: Adapter
 
+    private lateinit var disposable: Disposable
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -41,7 +44,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
                super.onScrolled(recyclerView, dx, dy)
                val last = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                    if (last == recyclerView.adapter!!.itemCount - 1 && dy != 0 ) {
-                       getData()
+                       getNextPage()
                 }
                }
             })
@@ -53,7 +56,18 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
         }
         setContentView(binding.root)
 
-    getData()
+        disposable = repo.getData()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { data ->
+                if (isDataError(data)) {
+                    showErrorSnack()
+                }
+                adapterRecycler.add(data)
+                isLoading = false
+                binding.swiperefresh.isRefreshing = false
+            }
+        getNextPage()
 
     binding.fabDelete.setOnClickListener {
         adapterRecycler.delete()
@@ -61,28 +75,16 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
 
     binding.swiperefresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
         override fun onRefresh() {
-            getData()
+            repo.repoReload()
         }
     })
     }
 
-    private fun getData() {
-        if (isLoading == false) {
-            Log.d("DEBUG", "getData")
+    private fun getNextPage() {
+     //    if (isLoading == false) {
             isLoading = true
-            binding.swiperefresh.isRefreshing = true
-            repo.getData()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { data ->
-                    if (isDataError(data) && adapterRecycler.itemCount == 1) {
-                        showErrorSnack()
-                    }
-                    adapterRecycler.add(data)
-                    isLoading = false
-                    binding.swiperefresh.isRefreshing = false
-                }
-        }
+            repo.loadData()
+     //   }
     }
 
     private fun isDataError(data: List<DataRecycler>) = data.size == 1 && (data[0] is DataRecycler.Error)
@@ -91,7 +93,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
         Snackbar.make(binding.root, "Ошибка сервера", Snackbar.LENGTH_SHORT)
                 .setAction("Повотроить", object : View.OnClickListener{
                     override fun onClick(v: View?) {
-                        getData()
+                        getNextPage()
                     }
                 })
                 .show()
@@ -110,4 +112,8 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
         binding.fabDelete.visibility = View.VISIBLE
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable.dispose()
+    }
 }
