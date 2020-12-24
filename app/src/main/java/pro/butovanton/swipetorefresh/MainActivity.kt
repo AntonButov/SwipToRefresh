@@ -60,10 +60,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { data ->
-                if (isDataError(data)) {
-                    showErrorSnack()
-                }
-                adapterRecycler.add(data)
+          adapterRecycler.add(data)
                 isLoading = false
                 binding.swiperefresh.isRefreshing = false
             }
@@ -72,14 +69,18 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
         repo.errorServer = object: Repo.ErrorServer {
             override fun errorServer() {
         runOnUiThread() {
+            if (adapterRecycler.itemCount == 1)
             showErrorSnack()
+            else {
+                runOnUiThread { adapterRecycler.add(DataRecycler.Error()) }
+            }
             isLoading = false
         }
         }
         }
 
         binding.fabDelete.setOnClickListener {
-        adapterRecycler.delete()
+        val killList = adapterRecycler.delete()
     }
 
     binding.swiperefresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
@@ -90,13 +91,11 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
     }
 
     private fun getNextPage() {
-     //    if (isLoading == false) {
+         if (isLoading == false) {
             isLoading = true
             repo.loadData()
-     //   }
+        }
     }
-
-    private fun isDataError(data: List<DataRecycler>) = data.size == 1 && (data[0] is DataRecycler.Error)
 
     private fun showErrorSnack() {
         Snackbar.make(binding.root, "Ошибка сервера", Snackbar.LENGTH_INDEFINITE)

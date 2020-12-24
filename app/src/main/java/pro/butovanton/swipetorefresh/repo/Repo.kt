@@ -28,7 +28,6 @@ class Repo(private val server: IServer, val dao: Dao = (app as App).getDB().getD
 
     private var serverCanMore = false
     private var serverError = false
-    private lateinit var error: Single<Boolean>
 
     override fun getData(): Observable<List<DataRecycler>> {
         return getFromDisk()
@@ -41,7 +40,7 @@ class Repo(private val server: IServer, val dao: Dao = (app as App).getDB().getD
 
     fun loadData() {
        server.getNextPage()
-                .map { TransformResponseServerToDataRecycler().mapResponserServerToDataRecycler(it) }
+                .map { transformResponseServerToDataRecycler.mapResponserServerToDataRecycler(it) }
                 .filter { it.size > 0 }
                 .doOnSuccess { data ->
                     saveToDisk(data)
