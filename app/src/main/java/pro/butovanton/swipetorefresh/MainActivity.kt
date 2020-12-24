@@ -30,6 +30,8 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
 
     private lateinit var disposable: Disposable
 
+    private lateinit var menu: Menu
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -107,8 +109,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
                 .show()
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
+        this.menu = menu
         return true
     }
 
