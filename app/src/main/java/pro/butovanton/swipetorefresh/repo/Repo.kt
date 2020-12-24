@@ -1,22 +1,13 @@
 package pro.butovanton.swipetorefresh.repo
 
-import androidx.lifecycle.LiveDataReactiveStreams
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.annotations.NonNull
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
-import org.reactivestreams.Publisher
+import io.reactivex.rxjava3.core.*
 import pro.butovanton.swipetorefresh.App
 import pro.butovanton.swipetorefresh.App.Companion.app
 import pro.butovanton.swipetorefresh.DataRecycler
-import pro.butovanton.swipetorefresh.MainActivity
 import pro.butovanton.swipetorefresh.TransformResponseServerToDataRecycler
 import pro.butovanton.swipetorefresh.db.Dao
 import pro.butovanton.swipetorefresh.db.Data
 import pro.butovanton.swipetorefresh.server.IServer
-import java.util.concurrent.Flow
 
 class Repo(private val server: IServer, val dao: Dao = (app as App).getDB().getDao(), val transformResponseServerToDataRecycler: TransformResponseServerToDataRecycler = TransformResponseServerToDataRecycler()): IRepo {
 
@@ -27,7 +18,6 @@ class Repo(private val server: IServer, val dao: Dao = (app as App).getDB().getD
     var errorServer: ErrorServer? = null
 
     private var serverCanMore = false
-    private var serverError = false
 
     override fun getData(): Observable<List<DataRecycler>> {
         return getFromDisk()
@@ -51,7 +41,6 @@ class Repo(private val server: IServer, val dao: Dao = (app as App).getDB().getD
     private fun  saveToDisk(dataRecycler: List<DataRecycler>) {
         val dataBD = mutableListOf<Data>()
         serverCanMore = false
-        serverError = false
         dataRecycler.forEach { dataRecycler ->
             when (dataRecycler) {
                 is DataRecycler.Data ->
@@ -79,5 +68,9 @@ class Repo(private val server: IServer, val dao: Dao = (app as App).getDB().getD
        if (serverCanMore)
            result.add(DataRecycler.LoadMore())
     return result
+    }
+
+    fun delete(killList: List<DataRecycler>): Completable {
+        return server.delete(killList)
     }
 }

@@ -1,9 +1,8 @@
 package pro.butovanton.swipetorefresh.server
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
+import pro.butovanton.swipetorefresh.DataRecycler
 import java.util.concurrent.TimeUnit
 
 class Server: IServer {
@@ -34,6 +33,13 @@ class Server: IServer {
 
     override fun setPage0() {
         page = 0
+    }
+
+    override fun delete(killList: List<DataRecycler>): Completable {
+        return Completable.create { e->
+            e.onComplete()
+        }.delay(2, TimeUnit.SECONDS)
+
     }
 
     private fun getData(): ResponseServer {
