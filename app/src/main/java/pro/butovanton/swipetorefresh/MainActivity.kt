@@ -51,10 +51,6 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
             })
         }
 
-        findViewById<FloatingActionButton>(R.id.fabDelete).setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
         setContentView(binding.root)
 
         disposableGetData = model.getData()
@@ -89,6 +85,9 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
                     override fun onSubscribe(d: Disposable?) { }
 
                     override fun onComplete() {
+                        killList.forEach {   deleteItem ->
+                            menu.addSubMenu((deleteItem as DataRecycler.Data).names)
+                        }
                     }
 
                     override fun onError(e: Throwable?) {
