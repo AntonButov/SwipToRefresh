@@ -9,7 +9,7 @@ import pro.butovanton.swipetorefresh.db.Dao
 import pro.butovanton.swipetorefresh.db.Data
 import pro.butovanton.swipetorefresh.server.IServer
 
-class Repo(private val server: IServer, val dao: Dao = (app as App).getDB().getDao(), val transformResponseServerToDataRecycler: TransformResponseServerToDataRecycler = TransformResponseServerToDataRecycler()): IRepo {
+class Repo(private val server: IServer, private val dao: Dao = (app as App).getDB().getDao(), private val transformResponseServerToDataRecycler: TransformResponseServerToDataRecycler = TransformResponseServerToDataRecycler()): IRepo {
 
     interface ErrorServer {
         fun errorServer()

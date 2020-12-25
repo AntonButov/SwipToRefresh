@@ -6,6 +6,7 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.View
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -16,11 +17,11 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 
 import pro.butovanton.swipetorefresh.databinding.ActivityMainBinding
 import pro.butovanton.swipetorefresh.repo.Repo
-import pro.butovanton.swipetorefresh.server.Server
 
 class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
 
-    private val repo = Repo(Server())
+    private val model: MainViewModel by viewModels()
+
     private var isLoading = false
 
     lateinit var binding: ActivityMainBinding
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
         }
         setContentView(binding.root)
 
-        disposableGetData = repo.getData()
+        disposableGetData = model.getData()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { data ->
@@ -66,7 +67,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
             }
         getNextPage()
 
-        repo.errorServer = object: Repo.ErrorServer {
+        model.setListnererrorServer(object: Repo.ErrorServer {
             override fun errorServer() {
         runOnUiThread() {
             if (adapterRecycler.itemCount == 1)
@@ -77,11 +78,11 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
             isLoading = false
         }
         }
-        }
+        })
 
         binding.fabDelete.setOnClickListener {
         val killList = adapterRecycler.delete()
-        repo.delete(killList = killList)
+        model.delete(killList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : CompletableObserver {
@@ -99,7 +100,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
 
     binding.swiperefresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
         override fun onRefresh() {
-            repo.repoReload()
+            model.reload()
         }
     })
     }
@@ -107,7 +108,7 @@ class MainActivity : AppCompatActivity(), Adapter.SelectInterface {
     private fun getNextPage() {
          if (isLoading == false) {
             isLoading = true
-            repo.loadData()
+            model.loadData()
         }
     }
 

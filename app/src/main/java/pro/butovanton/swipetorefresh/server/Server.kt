@@ -23,7 +23,7 @@ class Server: IServer {
     private fun initPage(page: Int): List<String> {
         val result = mutableListOf<String>()
         for (i in 0 .. 20)
-            result.add("Data $page$i")
+            result.add("Data page: $page, item: $i")
     return result
     }
 

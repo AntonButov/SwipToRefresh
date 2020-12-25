@@ -24,7 +24,4 @@ class App: Application() {
     DB = Room.databaseBuilder(this, AppDatabase::class.java, "db_data")
              .build()
     }
-
-
-
 }
